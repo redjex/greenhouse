@@ -1,0 +1,50 @@
+#include "DHT.h"
+#include <Wire.h> // библиотека для управления устройствами по I2C 
+#include <LiquidCrystal_I2C.h> // подключаем библиотеку для QAPASS 1602
+
+LiquidCrystal_I2C LCD(0x27,16,2); // присваиваем имя LCD для дисплея
+DHT dht_4(4,DHT11);
+
+
+void setup() {
+  Serial.begin(9600);
+  dht_4.begin();
+  LCD.init(); // инициализация LCD дисплея
+  LCD.backlight(); // включение подсветки дисплея
+
+}
+
+void loop() {
+    LCD.setCursor(1, 0);        // ставим курсор на 1 символ второй строки
+    LCD.print(dht_4.readTemperature());  // печатаем сообщение на второй строке
+    LCD.setCursor(7, 0);
+    LCD.print("Temp");  // печатаем сообщение на второй строке
+    delay(100);
+
+    LCD.setCursor(1, 1);        // ставим курсор на 1 символ второй строки
+    LCD.print(dht_4.readHumidity());  // печатаем сообщение на второй строке
+    LCD.setCursor(7, 1);
+    LCD.print("Hum");  // печатаем сообщение на второй строке
+    delay(100);
+
+    if (dht_4.readTemperature() > 28) {
+      pinMode(2, OUTPUT);
+       digitalWrite(2, HIGH);
+       delay(1000);
+     }
+    if (dht_4.readTemperature() == 25) {
+      pinMode(2, OUTPUT);
+       digitalWrite(2, LOW);
+       delay(1000);
+    }
+      if (dht_4.readHumidity() < 75) {
+      pinMode(13, OUTPUT);
+      digitalWrite(13, HIGH);
+      delay(1000);
+    }
+      if (dht_4.readHumidity() > 80) {
+      pinMode(13, OUTPUT);
+      digitalWrite(13, LOW);
+      delay(1000);
+    }
+}
